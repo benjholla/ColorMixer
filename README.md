@@ -9,6 +9,8 @@ The ultimate goal of this project is to have a simple yet accurate color mixing 
 
 `public static void Color mix(Color a, Color b);`
 
+Such that a + b = Pink when Color a = Red and Colob b = White
+
 References:
 ==========
 1) RGB Color Spaces - http://www.cs.joensuu.fi/~pkoirala/article/RGB-space.pdf
