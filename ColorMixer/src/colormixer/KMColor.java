@@ -50,7 +50,7 @@ public class KMColor {
 	}
 	
 	/**
-	 * Returns an Absorbance (K/S) measure for a given RGB channel.  
+	 * Returns an absorbance (K/S) measure for a given RGB channel.  
 	 * @param RGBChannelValue (integer value between 0 and 255).
 	 * @return
 	 */
@@ -123,6 +123,10 @@ public class KMColor {
 		this.A_b = (this.A_b + kmColor.A_b) / 2.0;
 	}
 	
+	/**
+	 * Returns a standard RGB color as a java.awt.Color object
+	 * @return
+	 */
 	public Color getColor(){
 		int red = (int)(calculateReflectance(this.A_r) * 255.0);
 		int green = (int)(calculateReflectance(this.A_g) * 255.0);
