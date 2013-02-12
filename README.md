@@ -13,8 +13,8 @@ Usage
 ==========
 The KMColorUtils class contains two mix methods for conveniently mixing java.awt.Color objects.
 
-public static Color mix(Color colorA, Color colorB);
-public static Color mix(Color... colors);
+`public static Color mix(Color colorA, Color colorB);`
+`public static Color mix(Color... colors);`
 
 References:
 ==========
