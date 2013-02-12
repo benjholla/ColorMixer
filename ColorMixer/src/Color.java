@@ -45,10 +45,15 @@ public class Color {
 	 * Calculates a new K and S coefficient using a weighted average of all K and S coefficients
 	 * In this implementation we assume each color has an equal concentration so each concentration 
 	 * weight will be equal to 1/(1 + colors.size)
-	 * @param colors
+	 * @param colors The Colors to mix into this Color
 	 */
 	public void mix(Color... colors){
-		// caculate a concentration weight for a equal concentration of all colors in mix
+		// just a little error checking
+		if(colors == null || colors.length > 0){
+			return;
+		}
+		
+		// calculate a concentration weight for a equal concentration of all colors in mix
 		double concentration = 1 / (1 + colors.length);
 		
 		// calculate first iteration
@@ -60,6 +65,28 @@ public class Color {
 			K += colors[i].getK() * concentration;
 			S += colors[i].getS() * concentration;
 		}
+		
+		// update with results
+		this.K = K;
+		this.S = S;
+		this.R = calculateReflectance(K, S);
+	}
+	
+	/**
+	 * Mixes another color into this color
+	 * Calculates a new K and S coefficient using by averaging the K and S values
+	 * In this implementation we assume each color has an equal concentration
+	 * @param color The Color to mix into this Color
+	 */
+	public void mix(Color color){
+		// just a little error checking
+		if(color == null){
+			return;
+		}
+		
+		// calculate new K and S for mix with one color of equal concentration
+		double K = (this.K * 0.5) + (color.getK() * 0.5);
+		double S = (this.S * 0.5) + (color.getS() * 0.5);
 		
 		// update with results
 		this.K = K;
