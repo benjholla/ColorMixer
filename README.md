@@ -19,9 +19,13 @@ The KMColorUtils class contains two mix methods for conveniently mixing java.awt
 
 References:
 ==========
-1) Chet S. Haase and Gary W. Meyer. 1992. Modeling pigmented materials for realistic image synthesis.  ACM Trans. Graph. 11, 4 (October 1992), 305-335. DOI=10.1145/146443.146452 http://doi.acm.org/10.1145/146443.146452
+1) P. Kubelka, F. Munk, An article on optics of paint layers, August, 1931. (Translated from German by Steve Westin). http://www.graphics.cornell.edu/~westin/pubs/kubelka.pdf
 
-2) Blatner, A.M., Ferwerda, J.A., Darling, B.A. and Bailey, R.J. (2011) TangiPaint: a tangible digital painting system. Proceedings IS&T/SID 19th Color Imaging Conference, 102-107.
+2) Chet S. Haase and Gary W. Meyer. 1992. Modeling pigmented materials for realistic image synthesis.  ACM Trans. Graph. 11, 4 (October 1992), 305-335. DOI=10.1145/146443.146452 http://doi.acm.org/10.1145/146443.146452
+
+3) Blatner, A.M., Ferwerda, J.A., Darling, B.A. and Bailey, R.J. (2011) TangiPaint: a tangible digital painting system. Proceedings IS&T/SID 19th Color Imaging Conference, 102-107. http://www.cis.rit.edu/people/faculty/ferwerda/publications/2011/blatner11_cic.pdf
+
+4) Verification of the kubelka-munk turbid media theory for artist acrylic paint by M Mohammadi, R Berns, 2004. http://art-si.org/PDFs/Processing/KMreport_10_01.pdf
 
 License:
 ==========
