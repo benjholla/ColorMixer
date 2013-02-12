@@ -1,22 +1,22 @@
-import java.awt.Color;
-
 import Jama.Matrix;
 
 public class ColorSpace {
-
-	public static void main(String[] args){
-		Color color = Color.RED;
-		System.out.println("R: " + color.getRed() + ", G: " + color.getGreen() + ", B: " + color.getBlue());
-		ColorSpace colorSpace1 = new ColorSpace(color.getRed(), color.getGreen(), color.getBlue());
-		ColorSpace colorSpace2 = new ColorSpace(colorSpace1.getTristimulusX(), colorSpace1.getTristimulusY(), colorSpace1.getTristimulusZ());
-	}
 	
+	// TODO: Compare with values listed at http://en.wikipedia.org/wiki/CIE_1931_color_space
 	public static final double[][] standardObserver1931Values = {{0.489989,  0.310008, 0.2},
 																 {0.0176962, 0.81240,  0.010},
 																 {0.0,       0.01,     0.99}};
 	
 	// Tristimulus XYZ Color Model components
-	private double tristimulusX;
+	// In this model, Y means luminance, Z is quasi-equal to blue stimulation, 
+	// or the S cone response, and X is a mix (a linear combination) of cone 
+	// response curves chosen to be nonnegative. Thus, XYZ may be confused with
+	// LMS cone responses. But in the CIE XYZ color space, the tristimulus values
+	// are not the L, M, and S responses of the human eye, even if X and Z are 
+	// roughly red and blue. Rather, they may be thought of as 'derived' parameters
+	// from the long-, medium-, and short-wavelength cones.
+	// Source Wikipedia -> http://en.wikipedia.org/wiki/CIE_1931_color_space
+	private double tristimulusX; 
 	private double tristimulusY;
 	private double tristimulusZ;
 	
@@ -65,7 +65,7 @@ public class ColorSpace {
 	public double getB() {
 		return B;
 	}
-
+	
 	public ColorSpace(int R, int G, int B){
 		this.R = R;
 		this.G = G;
@@ -101,10 +101,9 @@ public class ColorSpace {
 		// compute RGB using the linear equation in the case of the standard observer
 		double[][] XYZValues = {{X},{Y},{Z}};
 		Matrix XYZ = new Matrix(XYZValues);
-		Matrix standardObserver1931Inverse = new Matrix(standardObserver1931Values).inverse();
 		
 		// solve for RGB
-		Matrix RGB = standardObserver1931Inverse.times(XYZ);
+		Matrix RGB = new Matrix(standardObserver1931Values).inverse().times(XYZ);
 		this.R = (int)RGB.get(0, 0);
 		this.G = (int)RGB.get(1, 0);
 		this.B = (int)RGB.get(2, 0);
@@ -119,7 +118,7 @@ public class ColorSpace {
 	}
 
 	private double calculateChromaticityZ(double X, double Y, double Z){
-		return Z / (X + Y + Z);
+		return Z / (X + Y + Z); 
 	}
 	
 }
