@@ -67,6 +67,13 @@ public class Color {
 		this.R = calculateReflectance(K, S);
 	}
 	
+	/**
+	 * Returns a Reflectance measure.  Assumes the color is opaque.
+	 * Reflectance = 1 + (K/S)-[(K/S)^2+2(K/S)]^0.5
+	 * @param K Kubelka-Munk absorption coefficient
+	 * @param S Kubelka-Munk scattering coefficient
+	 * @return
+	 */
 	private double calculateReflectance(double K, double S){
 		return 1.0 + (K/S) - Math.pow(Math.pow((K/S), 2.0) + 2.0*(K/S), 0.5);
 	}
