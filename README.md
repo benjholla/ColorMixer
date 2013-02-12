@@ -9,7 +9,7 @@ The ultimate goal of this project is to have a simple yet accurate color mixing 
 
 `public static void Color mix(Color a, Color b);`
 
-Such that a + b = Pink when Color a = Red and Colob b = White
+Such that Color a + Color b = Pink when Color a = Red and Colob b = White
 
 References:
 ==========
