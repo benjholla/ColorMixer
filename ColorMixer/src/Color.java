@@ -1,43 +1,54 @@
 
 public class Color {
 
-	private double K; // Kubelka-Munk absorption coefficient
-	private double S; // Kubelka-Munk scattering coefficient
-	private double R; // R = Reflectance = 1 + (K/S)-[(K/S)^2+2(K/S)]^0.5 (assuming color is opaque)
+	// Kubelka-Munk absorption coefficient to scattering coefficient ratios for each channel (also known as the Absorbance)
+	private double A_r; // RED channel absorbance
+	private double A_g; // GREEN channel absorbance
+	private double A_b; // BLUE channel absorbance
+	
+	// R = Reflectance = 1 + (K/S)-[(K/S)^2+2(K/S)]^0.5 (assuming color is opaque) for each channel
+	private double R_r; // RED channel reflectance
+	private double R_g; // GREEN channel reflectance
+	private double R_b; // BLUE channel reflectance
 	
 	/**
-	 * Returns the Color's Kubelka-Munk absorption coefficient
+	 * Returns a Reflectance measure.  Assumes the color is opaque.
+	 * Reflectance = 1 + (K/S)-[(K/S)^2+2(K/S)]^0.5
+	 * @param KS Kubelka-Munk absorption coefficient to scattering coefficient ratio
 	 * @return
 	 */
-	public double getK(){
-		return K;
+	private double calculateReflectance(double KS){
+		return (1.0 + (KS)) - Math.pow(Math.pow((KS), 2.0) + 2.0*(KS), 0.5);
 	}
 	
 	/**
-	 * Return's the Color's Kubelka-Munk scattering coefficient
+	 * Returns an Absorbance (K/S) measure for a given RGB channel.  
+	 * @param RGBChannelValue (integer value between 0 and 255).
 	 * @return
 	 */
-	public double getS(){
-		return S;
-	}
-	
-	/**
-	 * Returns the Color's Reflectance
-	 * @return
-	 */
-	public double getReflectance(){
-		return R;
+	private double calculateAbsorbance(double RGBChannelValue){
+		return Math.pow((1.0-RGBChannelValue), 2.0) / (2.0 * RGBChannelValue);
 	}
 	
 	/**
 	 * Creates a new Color
-	 * @param K Kubelka-Munk absorption coefficient
-	 * @param S Kubelka-Munk scattering coefficient
+	 * @param color The color to create
 	 */
-	public Color(double K, double S){
-		this.K = K;
-		this.S = S;
-		this.R = calculateReflectance(K, S); 
+	public Color(java.awt.Color color){
+		// approximate zero if necessary
+		double red = color.getRed() == 0 ? 0.00001 : color.getRed();
+		double green = color.getGreen() == 0 ? 0.00001 : color.getGreen();
+		double blue = color.getBlue() == 0 ? 0.00001 : color.getBlue();
+		
+		// calculate an Absorbance measure for each channel of the color
+		this.A_r = calculateAbsorbance(red);
+		this.A_g = calculateAbsorbance(green);
+		this.A_b = calculateAbsorbance(blue);
+		
+		// calculate a Reflectance for each channel of the color
+		this.R_r = calculateReflectance(A_r); 
+		this.R_g = calculateReflectance(A_g); 
+		this.R_b = calculateReflectance(A_b); 
 	}
 	
 	/**
@@ -57,19 +68,24 @@ public class Color {
 		double concentration = 1 / (1 + colors.length);
 		
 		// calculate first iteration
-		double K = this.K * concentration;
-		double S = this.S * concentration;
+		double A_r = this.A_r * concentration;
+		double A_g = this.A_g * concentration;
+		double A_b = this.A_b * concentration;
 		
 		// sum the weighted average
 		for(int i=0; i<colors.length; i++){
-			K += colors[i].getK() * concentration;
-			S += colors[i].getS() * concentration;
+			A_r += colors[i].A_r * concentration;
+			A_g += colors[i].A_g * concentration;
+			A_b += colors[i].A_b * concentration;
 		}
 		
 		// update with results
-		this.K = K;
-		this.S = S;
-		this.R = calculateReflectance(K, S);
+		this.A_r = A_r;
+		this.A_g = A_g;
+		this.A_b = A_b;
+		this.R_r = calculateReflectance(A_r);
+		this.R_g = calculateReflectance(A_g);
+		this.R_b = calculateReflectance(A_b);
 	}
 	
 	/**
@@ -84,24 +100,23 @@ public class Color {
 			return;
 		}
 		
-		// calculate new K and S for mix with one color of equal concentration
-		double K = (this.K * 0.5) + (color.getK() * 0.5);
-		double S = (this.S * 0.5) + (color.getS() * 0.5);
+		// calculate new KS (Absorbance) for mix with one color of equal concentration
+		double A_r = (this.A_r * 0.5) + (color.A_r * 0.5);
+		double A_g = (this.A_g * 0.5) + (color.A_g * 0.5);
+		double A_b = (this.A_b * 0.5) + (color.A_b * 0.5);
 		
 		// update with results
-		this.K = K;
-		this.S = S;
-		this.R = calculateReflectance(K, S);
+		this.A_r = A_r;
+		this.A_g = A_g;
+		this.A_b = A_b;
+		this.R_r = calculateReflectance(A_r);
+		this.R_g = calculateReflectance(A_g);
+		this.R_b = calculateReflectance(A_b);
 	}
 	
-	/**
-	 * Returns a Reflectance measure.  Assumes the color is opaque.
-	 * Reflectance = 1 + (K/S)-[(K/S)^2+2(K/S)]^0.5
-	 * @param K Kubelka-Munk absorption coefficient
-	 * @param S Kubelka-Munk scattering coefficient
-	 * @return
-	 */
-	private double calculateReflectance(double K, double S){
-		return 1.0 + (K/S) - Math.pow(Math.pow((K/S), 2.0) + 2.0*(K/S), 0.5);
+	// Source -> http://www.cis.rit.edu/people/faculty/ferwerda/publications/2011/blatner11_cic.pdf
+	public java.awt.Color getRGBColor(){
+		return new java.awt.Color((int)R_r, (int)R_g, (int)R_b);
 	}
+	
 }
