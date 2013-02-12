@@ -14,11 +14,11 @@ public class Color {
 	/**
 	 * Returns a Reflectance measure.  Assumes the color is opaque.
 	 * Reflectance = 1 + (K/S)-[(K/S)^2+2(K/S)]^0.5
-	 * @param KS Kubelka-Munk absorption coefficient to scattering coefficient ratio
+	 * @param absortionRatio Kubelka-Munk absorption coefficient to scattering coefficient ratio
 	 * @return
 	 */
-	private double calculateReflectance(double KS){
-		return (1.0 + (KS)) - Math.pow(Math.pow((KS), 2.0) + 2.0*(KS), 0.5);
+	private double calculateReflectance(double absortionRatio){
+		return 1.0 + absortionRatio - Math.pow(Math.pow((absortionRatio), 2.0) + 2.0*(absortionRatio), 0.5);
 	}
 	
 	/**
@@ -35,10 +35,10 @@ public class Color {
 	 * @param color The color to create
 	 */
 	public Color(java.awt.Color color){
-		// approximate zero if necessary
-		double red = color.getRed() == 0 ? 0.00001 : color.getRed();
-		double green = color.getGreen() == 0 ? 0.00001 : color.getGreen();
-		double blue = color.getBlue() == 0 ? 0.00001 : color.getBlue();
+		// normalize the RGB color values
+		double red = color.getRed() == 0 ? 0.00001 : (double)color.getRed()/255.0;
+		double green = color.getGreen() == 0 ? 0.00001 : (double)color.getGreen()/255.0;
+		double blue = color.getBlue() == 0 ? 0.00001 : (double)color.getBlue()/255.0;
 		
 		// calculate an Absorbance measure for each channel of the color
 		this.A_r = calculateAbsorbance(red);
@@ -60,12 +60,12 @@ public class Color {
 	 */
 	public void mix(Color... colors){
 		// just a little error checking
-		if(colors == null || colors.length > 0){
+		if(colors == null || colors.length == 0){
 			return;
 		}
 		
 		// calculate a concentration weight for a equal concentration of all colors in mix
-		double concentration = 1 / (1 + colors.length);
+		double concentration = 1.0 / (1.0 + (double)colors.length);
 		
 		// calculate first iteration
 		double A_r = this.A_r * concentration;
@@ -74,6 +74,8 @@ public class Color {
 		
 		// sum the weighted average
 		for(int i=0; i<colors.length; i++){
+			System.out.println("R: " + colors[i].getRGBColor().getRed() + ", G: " + colors[i].getRGBColor().getGreen() + ", B: " + colors[i].getRGBColor().getBlue());
+			
 			A_r += colors[i].A_r * concentration;
 			A_g += colors[i].A_g * concentration;
 			A_b += colors[i].A_b * concentration;
@@ -83,9 +85,11 @@ public class Color {
 		this.A_r = A_r;
 		this.A_g = A_g;
 		this.A_b = A_b;
-		this.R_r = calculateReflectance(A_r);
-		this.R_g = calculateReflectance(A_g);
-		this.R_b = calculateReflectance(A_b);
+		this.R_r = calculateReflectance(this.A_r);
+		this.R_g = calculateReflectance(this.A_g);
+		this.R_b = calculateReflectance(this.A_b);
+		
+		System.out.println("R: " + getRGBColor().getRed() + ", G: " + getRGBColor().getGreen() + ", B: " + getRGBColor().getBlue());
 	}
 	
 	/**
@@ -95,28 +99,32 @@ public class Color {
 	 * @param color The Color to mix into this Color
 	 */
 	public void mix(Color color){
+		System.out.println("R: " + color.getRGBColor().getRed() + ", G: " + color.getRGBColor().getGreen() + ", B: " + color.getRGBColor().getBlue());
+		
 		// just a little error checking
 		if(color == null){
 			return;
 		}
 		
 		// calculate new KS (Absorbance) for mix with one color of equal concentration
-		double A_r = (this.A_r * 0.5) + (color.A_r * 0.5);
-		double A_g = (this.A_g * 0.5) + (color.A_g * 0.5);
-		double A_b = (this.A_b * 0.5) + (color.A_b * 0.5);
+		double A_r = (this.A_r + color.A_r) / 2.0;
+		double A_g = (this.A_g + color.A_g) / 2.0;
+		double A_b = (this.A_b + color.A_b) / 2.0;
 		
 		// update with results
 		this.A_r = A_r;
 		this.A_g = A_g;
 		this.A_b = A_b;
-		this.R_r = calculateReflectance(A_r);
-		this.R_g = calculateReflectance(A_g);
-		this.R_b = calculateReflectance(A_b);
+		this.R_r = calculateReflectance(this.A_r);
+		this.R_g = calculateReflectance(this.A_g);
+		this.R_b = calculateReflectance(this.A_b);
+		
+		System.out.println("R: " + getRGBColor().getRed() + ", G: " + getRGBColor().getGreen() + ", B: " + getRGBColor().getBlue());
 	}
 	
 	// Source -> http://www.cis.rit.edu/people/faculty/ferwerda/publications/2011/blatner11_cic.pdf
 	public java.awt.Color getRGBColor(){
-		return new java.awt.Color((int)R_r, (int)R_g, (int)R_b);
+		return new java.awt.Color((int)(R_r*255.0), (int)(R_g*255.0), (int)(R_b*255.0));
 	}
 	
 }
