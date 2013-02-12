@@ -32,14 +32,6 @@ import java.awt.Color;
  * KMColor color = new KMColor(java.awt.Color.RED);
  * color.mix(java.awt.Color.ORANGE);
  * java.awt.Color result = color.getRGBColor();
- * 
- * References: 
- * 
- * 1) Chet S. Haase and Gary W. Meyer. 1992. Modeling pigmented materials for realistic image synthesis. 
- *    ACM Trans. Graph. 11, 4 (October 1992), 305-335. DOI=10.1145/146443.146452 http://doi.acm.org/10.1145/146443.146452
- *    
- * 2) Blatner, A.M., Ferwerda, J.A., Darling, B.A. and Bailey, R.J. (2011) TangiPaint: a tangible digital painting system. 
- *    Proceedings IS&T/SID 19th Color Imaging Conference, 102-107.
  */
 public class KMColor {
 	
