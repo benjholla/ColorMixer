@@ -1,7 +1,7 @@
 Color Mixer
 ==========
 
-A Java implementation of the Kubelka-Munk Theory of Reflectance for mixing colors.  This implementation uses a simplified version of the Kubelka-Munk model that assumes all colors have the same concentration when blending and that all colors are opaque.
+A Java implementation of the Kubelka-Munk Theory of Reflectance for mixing RGB colors.  This implementation uses a simplified version of the Kubelka-Munk model that assumes all colors have the same concentration when blending and that all colors are opaque.
 
 Goal
 ==========
