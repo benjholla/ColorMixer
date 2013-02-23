@@ -10,8 +10,8 @@ public class ColorSpace {
 		System.out.println("R: " + color.getRed() + ", G: " + color.getGreen() + ", B: " + color.getBlue());
 		
 		
-		ColorSpace colorSpace1 = new ColorSpace(color.getRed(), color.getGreen(), color.getBlue());
-		ColorSpace colorSpace2 = new ColorSpace(colorSpace1.getTristimulusX(), colorSpace1.getTristimulusY(), colorSpace1.getTristimulusZ());
+		ColorSpace colorSpace1 = createNewColorSpaceFromRGB(color.getRed(), color.getGreen(), color.getBlue());
+		ColorSpace colorSpace2 = createNewColorSpaceFromTristimulusXYZ(colorSpace1.getTristimulusX(), colorSpace1.getTristimulusY(), colorSpace1.getTristimulusZ());
 		
 		System.out.println("R: " + colorSpace1.getRYB_R() + ", Y: " + colorSpace1.getRYB_Y() + ", B: " + colorSpace1.getRYB_B());
 		
@@ -95,15 +95,20 @@ public class ColorSpace {
 		return RYB_B;
 	}
 
-	public ColorSpace(int R, int G, int B){
-		this.RGB_R = R;
-		this.RGB_G = G;
-		this.RGB_B = B;
+	private ColorSpace(){
+		// make the constructor private
+	}
+	
+	public static ColorSpace createNewColorSpaceFromRGB(int R, int G, int B){
+		ColorSpace colorspace = new ColorSpace();
+		colorspace.RGB_R = R;
+		colorspace.RGB_G = G;
+		colorspace.RGB_B = B;
 		
-		double[] RYB = rgbToRYB(this.RGB_R, this.RGB_G, this.RGB_B);
-		this.RYB_R = (int)RYB[0];
-		this.RYB_Y = (int)RYB[1];
-		this.RYB_B = (int)RYB[2];
+		double[] RGBToRYB = rgbToRYB(colorspace.RGB_R, colorspace.RGB_G, colorspace.RGB_B);
+		colorspace.RYB_R = (int)RGBToRYB[0];
+		colorspace.RYB_Y = (int)RGBToRYB[1];
+		colorspace.RYB_B = (int)RGBToRYB[2];
 
 		// compute XYZ using the linear equation in the case of the standard observer
 		double[][] RGBValues = {{R},{G},{B}};
@@ -112,25 +117,58 @@ public class ColorSpace {
 
 		// solve for XYZ
 		Matrix XYZ = standardObserver1931.times(RGB);
-		this.tristimulusX = XYZ.get(0, 0);
-		this.tristimulusY = XYZ.get(1, 0);
-		this.tristimulusZ = XYZ.get(2, 0);
+		colorspace.tristimulusX = XYZ.get(0, 0);
+		colorspace.tristimulusY = XYZ.get(1, 0);
+		colorspace.tristimulusZ = XYZ.get(2, 0);
 
 		// calculate chromaticity coordinates
-		this.chromaticityX = calculateChromaticityX(tristimulusX, tristimulusY, tristimulusZ);
-		this.chromaticityY = calculateChromaticityY(tristimulusX, tristimulusY, tristimulusZ);
-		this.chromaticityZ = calculateChromaticityZ(tristimulusX, tristimulusY, tristimulusZ);
+		colorspace.chromaticityX = calculateChromaticityX(colorspace.tristimulusX, colorspace.tristimulusY, colorspace.tristimulusZ);
+		colorspace.chromaticityY = calculateChromaticityY(colorspace.tristimulusX, colorspace.tristimulusY, colorspace.tristimulusZ);
+		colorspace.chromaticityZ = calculateChromaticityZ(colorspace.tristimulusX, colorspace.tristimulusY, colorspace.tristimulusZ);
+		
+		return colorspace;
+	}
+	
+	public static ColorSpace createNewColorSpaceFromRYB(int R, int Y, int B){
+		ColorSpace colorspace = new ColorSpace();
+		colorspace.RYB_R = R;
+		colorspace.RYB_Y = Y;
+		colorspace.RYB_B = B;
+		
+		double[] RYBToRGB = rybToRGB(colorspace.RYB_R, colorspace.RYB_Y, colorspace.RYB_B);
+		colorspace.RGB_R = (int)RYBToRGB[0];
+		colorspace.RGB_G = (int)RYBToRGB[1];
+		colorspace.RGB_B = (int)RYBToRGB[2];
+
+		// compute XYZ using the linear equation in the case of the standard observer
+		double[][] RGBValues = {{colorspace.RGB_R},{colorspace.RGB_G},{colorspace.RGB_B}};
+		Matrix RGB = new Matrix(RGBValues);
+		Matrix standardObserver1931 = new Matrix(standardObserver1931Values);
+
+		// solve for XYZ
+		Matrix XYZ = standardObserver1931.times(RGB);
+		colorspace.tristimulusX = XYZ.get(0, 0);
+		colorspace.tristimulusY = XYZ.get(1, 0);
+		colorspace.tristimulusZ = XYZ.get(2, 0);
+
+		// calculate chromaticity coordinates
+		colorspace.chromaticityX = calculateChromaticityX(colorspace.tristimulusX, colorspace.tristimulusY, colorspace.tristimulusZ);
+		colorspace.chromaticityY = calculateChromaticityY(colorspace.tristimulusX, colorspace.tristimulusY, colorspace.tristimulusZ);
+		colorspace.chromaticityZ = calculateChromaticityZ(colorspace.tristimulusX, colorspace.tristimulusY, colorspace.tristimulusZ);
+		
+		return colorspace;
 	}
 
-	public ColorSpace(double X, double Y, double Z){
-		this.tristimulusX = X;
-		this.tristimulusY = Y;
-		this.tristimulusZ = Z;
+	public static ColorSpace createNewColorSpaceFromTristimulusXYZ(double X, double Y, double Z){
+		ColorSpace colorspace = new ColorSpace();
+		colorspace.tristimulusX = X;
+		colorspace.tristimulusY = Y;
+		colorspace.tristimulusZ = Z;
 
 		// calculate chromaticity coordinates
-		this.chromaticityX = calculateChromaticityX(X, Y, Z);
-		this.chromaticityY = calculateChromaticityY(X, Y, Z);
-		this.chromaticityZ = calculateChromaticityZ(X, Y, Z);
+		colorspace.chromaticityX = calculateChromaticityX(X, Y, Z);
+		colorspace.chromaticityY = calculateChromaticityY(X, Y, Z);
+		colorspace.chromaticityZ = calculateChromaticityZ(X, Y, Z);
 
 		// compute RGB using the linear equation in the case of the standard observer
 		double[][] XYZValues = {{X},{Y},{Z}};
@@ -139,25 +177,27 @@ public class ColorSpace {
 
 		// solve for RGB
 		Matrix RGB = standardObserver1931Inverse.times(XYZ);
-		this.RGB_R = (int)RGB.get(0, 0);
-		this.RGB_G = (int)RGB.get(1, 0);
-		this.RGB_B = (int)RGB.get(2, 0);
+		colorspace.RGB_R = (int)RGB.get(0, 0);
+		colorspace.RGB_G = (int)RGB.get(1, 0);
+		colorspace.RGB_B = (int)RGB.get(2, 0);
 		
-		double[] RYB = rgbToRYB(this.RGB_R, this.RGB_G, this.RGB_B);
-		this.RYB_R = (int)RYB[0];
-		this.RYB_Y = (int)RYB[1];
-		this.RYB_B = (int)RYB[2];
+		double[] RYB = rgbToRYB(colorspace.RGB_R, colorspace.RGB_G, colorspace.RGB_B);
+		colorspace.RYB_R = (int)RYB[0];
+		colorspace.RYB_Y = (int)RYB[1];
+		colorspace.RYB_B = (int)RYB[2];
+		
+		return colorspace;
 	}
 
-	private double calculateChromaticityX(double X, double Y, double Z){
+	private static double calculateChromaticityX(double X, double Y, double Z){
 		return X / (X + Y + Z);
 	}
 
-	private double calculateChromaticityY(double X, double Y, double Z){
+	private static double calculateChromaticityY(double X, double Y, double Z){
 		return Y / (X + Y + Z);
 	}
 
-	private double calculateChromaticityZ(double X, double Y, double Z){
+	private static double calculateChromaticityZ(double X, double Y, double Z){
 		return Z / (X + Y + Z);
 	}
 	
