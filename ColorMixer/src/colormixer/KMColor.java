@@ -37,7 +37,7 @@ public class KMColor {
 	
 	// Kubelka-Munk absorption coefficient to scattering coefficient ratios for each channel (also known as the Absorbance)
 	private double A_r; // RED channel absorbance
-	private double A_g; // GREEN channel absorbance
+	private double A_y; // GREEN channel absorbance
 	private double A_b; // BLUE channel absorbance
 	
 	/**
@@ -65,12 +65,12 @@ public class KMColor {
 	public KMColor(java.awt.Color color){
 		// normalize the RGB color values
 		double red = color.getRed() == 0 ? 0.00001 : (double)color.getRed()/255.0;
-		double green = color.getGreen() == 0 ? 0.00001 : (double)color.getGreen()/255.0;
+		double yellow = 255.0 - (color.getGreen() == 0 ? 0.00001 : (double)color.getGreen()/255.0);
 		double blue = color.getBlue() == 0 ? 0.00001 : (double)color.getBlue()/255.0;
 		
 		// calculate an Absorbance measure for each channel of the color
 		this.A_r = calculateAbsorbance(red);
-		this.A_g = calculateAbsorbance(green);
+		this.A_y = calculateAbsorbance(yellow);
 		this.A_b = calculateAbsorbance(blue);
 	}
 	
@@ -92,20 +92,20 @@ public class KMColor {
 		
 		// calculate first iteration
 		double A_r = this.A_r * concentration;
-		double A_g = this.A_g * concentration;
+		double A_g = this.A_y * concentration;
 		double A_b = this.A_b * concentration;
 		
 		// sum the weighted average
 		for(int i=0; i<colors.length; i++){
 			KMColor color = new KMColor(colors[i]);
 			A_r += color.A_r * concentration;
-			A_g += color.A_g * concentration;
+			A_g += color.A_y * concentration;
 			A_b += color.A_b * concentration;
 		}
 		
 		// update with results
 		this.A_r = A_r;
-		this.A_g = A_g;
+		this.A_y = A_g;
 		this.A_b = A_b;
 	}
 	
@@ -119,7 +119,7 @@ public class KMColor {
 		// calculate new KS (Absorbance) for mix with one color of equal concentration
 		KMColor kmColor = new KMColor(color);
 		this.A_r = (this.A_r + kmColor.A_r) / 2.0;
-		this.A_g = (this.A_g + kmColor.A_g) / 2.0;
+		this.A_y = (this.A_y + kmColor.A_y) / 2.0;
 		this.A_b = (this.A_b + kmColor.A_b) / 2.0;
 	}
 	
@@ -129,7 +129,7 @@ public class KMColor {
 	 */
 	public Color getColor(){
 		int red = (int)(calculateReflectance(this.A_r) * 255.0);
-		int green = (int)(calculateReflectance(this.A_g) * 255.0);
+		int green = 255 - ((int)(calculateReflectance(this.A_y) * 255.0));
 		int blue = (int)(calculateReflectance(this.A_b) * 255.0);
 		return new java.awt.Color(red, green, blue);
 	}

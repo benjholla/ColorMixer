@@ -2,7 +2,7 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
-	<classpathentry kind="lib" path="C:/Users/Administrator/Desktop/J-Atlas/dist-2012-09-09-1407/eclipse/plugins/org.eclipse.swt.win32.win32.x86_64_3.7.2.v3740f.jar" sourcepath="C:/Users/Administrator/Desktop/J-Atlas/dist-2012-09-09-1407/eclipse/plugins/org.eclipse.swt.win32.win32.x86_64.source_3.7.2.v3740f.jar">
+	<classpathentry kind="lib" path="/Applications/Eclipse3.7.2/eclipse/plugins/org.eclipse.swt.cocoa.macosx.x86_64_3.7.2.v3740f.jar" sourcepath="C:/Users/Administrator/Desktop/J-Atlas/dist-2012-09-09-1407/eclipse/plugins/org.eclipse.swt.win32.win32.x86_64.source_3.7.2.v3740f.jar">
 		<attributes>
 			<attribute name="javadoc_location" value="jar:file:/C:/Users/Administrator/Desktop/J-Atlas/dist-2012-09-09-1407/eclipse/plugins/org.eclipse.platform.doc.isv_3.7.2.v20120120-1417.jar!/reference/api"/>
 		</attributes>
@@ -31,5 +31,6 @@
 			<accessrule ignoreifbetter="true" kind="nonaccessible" pattern="**/*"/>
 		</accessrules>
 	</classpathentry>
+	<classpathentry kind="lib" path="src/Jama-1.0.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
