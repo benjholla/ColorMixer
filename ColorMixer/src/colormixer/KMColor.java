@@ -37,7 +37,7 @@ public class KMColor {
 	
 	// Kubelka-Munk absorption coefficient to scattering coefficient ratios for each channel (also known as the Absorbance)
 	private double A_r; // RED channel absorbance
-	private double A_y; // YELLOW channel absorbance
+	private double A_g; // GREEN channel absorbance
 	private double A_b; // BLUE channel absorbance
 	
 	/**
@@ -63,17 +63,14 @@ public class KMColor {
 	 * @param color The color to create
 	 */
 	public KMColor(java.awt.Color color){
-		// convert RBG to RYB color space
-		ColorSpace colorspace = ColorSpace.createNewColorSpaceFromRGB(color.getRed(), color.getGreen(), color.getBlue());
-		
 		// normalize the RGB color values
-		double red = colorspace.getRYB_R() == 0 ? 0.00001 : (double)colorspace.getRYB_R()/255.0;
-		double yellow = colorspace.getRYB_Y() == 0 ? 0.00001 : (double)colorspace.getRYB_Y()/255.0;
-		double blue = colorspace.getRYB_B() == 0 ? 0.00001 : (double)colorspace.getRYB_B()/255.0;
+		double red = color.getRed() == 0 ? 0.00001 : (double)color.getRed()/255.0;
+		double green = color.getGreen() == 0 ? 0.00001 : (double)color.getGreen()/255.0;
+		double blue = color.getBlue() == 0 ? 0.00001 : (double)color.getBlue()/255.0;
 		
 		// calculate an Absorbance measure for each channel of the color
 		this.A_r = calculateAbsorbance(red);
-		this.A_y = calculateAbsorbance(yellow);
+		this.A_g = calculateAbsorbance(green);
 		this.A_b = calculateAbsorbance(blue);
 	}
 	
@@ -95,20 +92,20 @@ public class KMColor {
 		
 		// calculate first iteration
 		double A_r = this.A_r * concentration;
-		double A_g = this.A_y * concentration;
+		double A_g = this.A_g * concentration;
 		double A_b = this.A_b * concentration;
 		
 		// sum the weighted average
 		for(int i=0; i<colors.length; i++){
 			KMColor color = new KMColor(colors[i]);
 			A_r += color.A_r * concentration;
-			A_g += color.A_y * concentration;
+			A_g += color.A_g * concentration;
 			A_b += color.A_b * concentration;
 		}
 		
 		// update with results
 		this.A_r = A_r;
-		this.A_y = A_g;
+		this.A_g = A_g;
 		this.A_b = A_b;
 	}
 	
@@ -122,7 +119,7 @@ public class KMColor {
 		// calculate new KS (Absorbance) for mix with one color of equal concentration
 		KMColor kmColor = new KMColor(color);
 		this.A_r = (this.A_r + kmColor.A_r) / 2.0;
-		this.A_y = (this.A_y + kmColor.A_y) / 2.0;
+		this.A_g = (this.A_g + kmColor.A_g) / 2.0;
 		this.A_b = (this.A_b + kmColor.A_b) / 2.0;
 	}
 	
@@ -131,14 +128,10 @@ public class KMColor {
 	 * @return
 	 */
 	public Color getColor(){
-		// de-normalize values
 		int red = (int)(calculateReflectance(this.A_r) * 255.0);
-		int yellow = (int)(calculateReflectance(this.A_y) * 255.0);
+		int green = (int)(calculateReflectance(this.A_g) * 255.0);
 		int blue = (int)(calculateReflectance(this.A_b) * 255.0);
-		
-		// convert back to rgb
-		ColorSpace colorspace = ColorSpace.createNewColorSpaceFromRYB(red, yellow, blue);	
-		return new java.awt.Color((int)colorspace.getRGB_R(), (int)colorspace.getRGB_G(), (int)colorspace.getRGB_B());
+		return new java.awt.Color(red, green, blue);
 	}
 	
 }
