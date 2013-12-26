@@ -3,6 +3,8 @@ Color Mixer
 
 A Java implementation of the Kubelka-Munk Theory of Reflectance for mixing RGB colors.  This implementation uses a simplified version of the Kubelka-Munk model that assumes all colors have the same concentration when blending and that all colors are opaque.
 
+*WARNING:* Currently this project seems to have some issues with the implementation and some color mixes do not result in the expected colors.  Unfortunately I do not currently have the time or insight to fix the issue(s).  Pull requests very welcome.
+
 Goal
 ==========
 The ultimate goal of this project is to have a intuitive (subtractive color model) yet accurate color mixing function of the form:
